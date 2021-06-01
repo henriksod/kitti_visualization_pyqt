@@ -1,0 +1,11 @@
+camera_window_height: 510
+camera_window_width: 1258
+camera_window_x: 630
+camera_window_y: -31
+velodyne_view_pitch: 120
+velodyne_view_yaw: -10
+velodyne_view_zoom: 0.11999999999999968
+velodyne_window_height: 638
+velodyne_window_width: 1291
+velodyne_window_x: 627
+velodyne_window_y: 434
