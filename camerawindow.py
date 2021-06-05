@@ -36,8 +36,10 @@ class CameraWindow(QWidget):
                          self.config.get('camera_window_width', default=self.cameraWidget.frame.size[0]),
                          self.config.get('camera_window_height', default=self.cameraWidget.frame.size[1]))
         
-    def setScanIdx(self, val): 
-        if (not (self.cameraWidget.scanIdx == val)) and len(self.data.cam1_files) > val and val > 0:
+    def setScanIdx(self, from_window, val):
+        if (not (self.cameraWidget.scanIdx == val)) and len(self.data.cam1_files) > val >= 0:
+            if from_window == self:
+                self.parent.setScanIdx(self, val)
             self.cameraWidget.frame = self.data.get_cam2(val)
             self.cameraWidget.UpdateBuffer()
             self.cameraWidget.scanIdx = val
@@ -46,12 +48,10 @@ class CameraWindow(QWidget):
     def getScanIdx(self): return self.scanIdx
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Q:
-            self.dispose()
-        elif event.key() == QtCore.Qt.Key_Right:
-            self.setScanIdx(self.getScanIdx() + 1)
+        if event.key() == QtCore.Qt.Key_Right:
+            self.setScanIdx(self, self.getScanIdx() + 1)
         elif event.key() == QtCore.Qt.Key_Left:
-            self.setScanIdx(self.getScanIdx() - 1)
+            self.setScanIdx(self, self.getScanIdx() - 1)
         elif event.key() == QtCore.Qt.Key_Up:
             self.cameraWidget.zoom += .01
             print(self.cameraWidget.zoom, flush=True)
@@ -61,10 +61,10 @@ class CameraWindow(QWidget):
         event.accept()
 
     def save(self):
-        self.config.put('camera_window_x', self.pos().x())
-        self.config.put('camera_window_y', self.pos().y())
-        self.config.put('camera_window_width', self.frameGeometry().width())
-        self.config.put('camera_window_height', self.frameGeometry().height())
+        self.config.put('camera_window_x', self.geometry().x())
+        self.config.put('camera_window_y', self.geometry().y())
+        self.config.put('camera_window_width', self.geometry().width())
+        self.config.put('camera_window_height', self.geometry().height())
 
     def dispose(self):
         self.deleteLater()

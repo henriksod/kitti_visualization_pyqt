@@ -39,8 +39,10 @@ class VelodyneWindow(QWidget):
         self.velodyneWidget.ang = self.config.get('velodyne_view_yaw', default=0)
         self.velodyneWidget.ang2 = self.config.get('velodyne_view_pitch', default=0)
     
-    def setScanIdx(self, val): 
-        if (not (self.velodyneWidget.scanIdx == val)) and len(self.data.velo_files) > val and val > 0:
+    def setScanIdx(self, from_window, val):
+        if (not (self.velodyneWidget.scanIdx == val)) and len(self.data.velo_files) > val >= 0:
+            if from_window == self:
+                self.parent.setScanIdx(self, val)
             self.scan = self.data.get_velo(val)
             reshaped_scan = np.zeros((self.scan.shape[0],6))
             reshaped_scan[:,:-2] = self.scan
@@ -58,12 +60,10 @@ class VelodyneWindow(QWidget):
         self.velodyneWidget.zoom = val
     
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Q:
-            self.dispose()
-        elif event.key() == QtCore.Qt.Key_Right:
-            self.setScanIdx(self.getScanIdx() + 1)
+        if event.key() == QtCore.Qt.Key_Right:
+            self.setScanIdx(self, self.getScanIdx() + 1)
         elif event.key() == QtCore.Qt.Key_Left:
-            self.setScanIdx(self.getScanIdx() - 1)
+            self.setScanIdx(self, self.getScanIdx() - 1)
         elif event.key() == QtCore.Qt.Key_Up:
             self.velodyneWidget.zoom += .01
         elif event.key() == QtCore.Qt.Key_Down:
@@ -79,10 +79,10 @@ class VelodyneWindow(QWidget):
         event.accept()
 
     def save(self):
-        self.config.put('velodyne_window_x', self.pos().x())
-        self.config.put('velodyne_window_y', self.pos().y())
-        self.config.put('velodyne_window_width', self.frameGeometry().width())
-        self.config.put('velodyne_window_height', self.frameGeometry().height())
+        self.config.put('velodyne_window_x', self.geometry().x())
+        self.config.put('velodyne_window_y', self.geometry().y())
+        self.config.put('velodyne_window_width', self.geometry().width())
+        self.config.put('velodyne_window_height', self.geometry().height())
         self.config.put('velodyne_view_zoom', self.velodyneWidget.zoom)
         self.config.put('velodyne_view_yaw', self.velodyneWidget.ang)
         self.config.put('velodyne_view_pitch', self.velodyneWidget.ang2)
@@ -134,11 +134,11 @@ class _VelodyneWidget(QOpenGLWidget):
         gl.glRotated(self.ang2, 1.0, 0.0, 0.0)
         
         gl.glPointSize(2)
-        
+
         self.pos_vbo.bind()
         gl.glEnableVertexAttribArray(0)
         gl.glVertexAttribPointer(0, 3, gl.GL_FLOAT, gl.GL_FALSE, 0, None)
-        
+
         self.col_vbo.bind()
         gl.glEnableVertexAttribArray(3)
         gl.glVertexAttribPointer(3, 3, gl.GL_FLOAT, gl.GL_FALSE, 0, None)
