@@ -6,7 +6,6 @@ opencv-contrib-python==4.4.0.44
 pandas==1.2.4
 Pillow==8.2.0
 pykitti==0.3.1
-PyOpenGL @ file:///C:/Users/henri/Documents/ComputerVision/kitti_visualization_pyqt/prerequisites/PyOpenGL-3.1.5-cp38-cp38-win_amd64.whl
 pyparsing==2.4.7
 PyQt5==5.15.4
 PyQt5-Qt5==5.15.2
