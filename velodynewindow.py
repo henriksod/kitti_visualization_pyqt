@@ -49,7 +49,7 @@ class VelodyneWindow(QWidget):
             reshaped_scan[:,3] = reshaped_scan[:,3] / (np.max(reshaped_scan[:,3]) + 1)
             reshaped_scan[:,4] = reshaped_scan[:,2] / (np.max(reshaped_scan[:,2]) + 1)
             self.velodyneWidget.vertices = reshaped_scan[:,0:3].astype('float32')#.tolist()
-            colors = reshaped_scan[:,3:6].astype('float32')
+            self.velodyneWidget.colors = reshaped_scan[:,3:6].astype('float32')
             self.velodyneWidget.UpdateBuffer()
             self.velodyneWidget.scanIdx = val
             self.scanIdx = val
